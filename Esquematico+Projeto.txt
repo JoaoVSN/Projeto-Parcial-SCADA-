@@ -1,0 +1,12 @@
+Segue o esquemático do circuito que iremos construir no Arduino UNO: 
+http://blog.filipeflop.com/wp-content/uploads/2015/02/Circuito-Arduino-Uno-SCT-01311.png
+
+Como visto o circuito utiliza o Arduino UNO acoplado a uma protoboard onde é montado o sistema
+com um sensor de corrente, resistores, um capacitor, potênciometro e um display para output de informações.
+Essas informações serão vinculadas a análise dos dados vindo do sensor de corrente utilizando o
+SCADA(Sistema de Supervisão e Aquisição de Dados), um software supervisório que funciona para monitoramento de 
+dados/partes de um processo.
+
+A integração do sensor com o SCADA será feita em base dos vídeos tutoriais desse canal: 
+https://www.youtube.com/user/scadabr/videos
+A construção do circuito com o sensor é descrita junto ao esquemático e em muitas outras fontes.
