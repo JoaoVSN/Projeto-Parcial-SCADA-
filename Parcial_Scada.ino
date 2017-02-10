@@ -1,10 +1,5 @@
 #include <SimpleModbusSlave.h>
 
-/* 
-   SimpleModbusSlaveV10 supports function 3, 6 & 16.
-   
-  
-//////////////// registers of your slave ///////////////////
 enum 
 {     
   // just add or remove registers and your good to go...
