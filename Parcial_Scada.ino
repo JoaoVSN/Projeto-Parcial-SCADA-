@@ -1,5 +1,9 @@
+//Bibliotecas necessarias para exibição no display Grove Light (Wire e rgb_lcd) e protocolo de comunicação de dados (SimpleModbusSlave)
+#include <Wire.h>
+#include <rgb_lcd.h>
 #include <SimpleModbusSlave.h>
 
+// Registradores e seus endereços. OFFSET do registrador relacionado ao potenciometro é o 0, sensor 1, botao 2.
 enum 
 {     
   // just add or remove registers and your good to go...
@@ -12,55 +16,56 @@ enum
   // i.e. the same address space
 };
 
+// Portas onde os componentes sao conectados ao Arduino.
 const int PUSHBTN = 13;
 const int POTEN = A2;
-const int SENSOR = A0;
+const int SENSOR = A3;
 bool Statebtn = LOW;
 unsigned int holdingRegs[HOLDING_REGS_SIZE]; // function 3 and 16 register array
-////////////////////////////////////////////////////////////
 
-void setup()
+
+rgb_lcd lcd;
+//Instancia e define a cor do LCD.
+const int colorR = 255;
+const int colorG = 255;
+const int colorB = 255;
+int Valor = 0;
+
+void setup() 
 {
-  /* parameters(HardwareSerial* SerialPort,
-                long baudrate, 
-		unsigned char byteFormat,
-                unsigned char ID, 
-                unsigned char transmit enable pin, 
-                unsigned int holding registers size,
-                unsigned int* holding register array)
-  */
-  
-  /* Valid modbus byte formats are:
-     SERIAL_8N2: 1 start bit, 8 data bits, 2 stop bits
-     SERIAL_8E1: 1 start bit, 8 data bits, 1 Even parity bit, 1 stop bit
-     SERIAL_8O1: 1 start bit, 8 data bits, 1 Odd parity bit, 1 stop bit
-     
-     You can obviously use SERIAL_8N1 but this does not adhere to the
-     Modbus specifications. That said, I have tested the SERIAL_8N1 option 
-     on various commercial masters and slaves that were suppose to adhere
-     to this specification and was always able to communicate... Go figure.
-     
-     These byte formats are already defined in the Arduino global name space. 
-  */
-	
+  lcd.begin(16, 2);
+    
+  lcd.setRGB(colorR, colorG, colorB);
+    
+  lcd.print("Tensao no sensor");
   modbus_configure(&Serial, 9600, SERIAL_8N1, 1, 2, HOLDING_REGS_SIZE, holdingRegs);
-
-  // modbus_update_comms(baud, byteFormat, id) is not needed but allows for easy update of the
-  // port variables and slave id dynamically in any function.
   modbus_update_comms(9600, SERIAL_8N1, 1);
   
   pinMode(PUSHBTN, INPUT);
+  
+  delay(1000);
 }
 
 void loop()
 {
-  if(PUSHBTN == HIGH)
-      Statebtn = !Statebtn;
-  
+  // Trata o apertar do botao com sua correspondente troca de estado.
+  if(digitalRead(PUSHBTN) == HIGH){
+      Statebtn = !Statebtn;}
+
+  //Conexao dos dados e feita pelo modbus.
   modbus_update();
-  
-  holdingRegs[SENSOR_VAL] = analogRead(SENSOR);
-  holdingRegs[POTENCIOMETRO_VAL] = analogRead(POTEN);
-  holdingRegs[POTENCIOMETRO_VAL] = digitalRead(Statebtn);
+
+  //Leitura dos dados pelas portas.
+  holdingRegs[SENSOR_VAL] = analogRead(A3);
+  holdingRegs[POTENCIOMETRO_VAL] = analogRead(A2);
+  holdingRegs[CHAVE_VAL] = Statebtn;
+ 
+// set the cursor to column 10, line 1
+ lcd.setCursor(10, 1);
+
+ Valor = analogRead(A3);
+ lcd.print(Valor);
+
+ delay(300);
 }
 
